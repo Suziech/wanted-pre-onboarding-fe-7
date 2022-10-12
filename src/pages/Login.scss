@@ -1,0 +1,87 @@
+@import '../styles/variables.scss';
+
+.login {
+  @include flex;
+  height: 100vh;
+  width: 100vw;
+
+  .loginWrapper {
+    border: 1px solid darkorange;
+    width: 40vw;
+    background-color: darkorange;
+    font-weight: 700;
+    padding: 3rem;
+
+    .header {
+      font-size: 2.5rem;
+      color: white;
+    }
+
+    .inputWrapper {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .idWrapper {
+      display: flex;
+      display: flex;
+      flex-direction: column;
+      color: white;
+      font-weight: 100;
+
+      .id {
+        border-radius: 10px;
+        height: 5vh;
+        border: none;
+
+        &:hover {
+          box-shadow: 2px 2px 4px #000000;
+        }
+      }
+    }
+
+    .pwWrapper {
+      display: flex;
+      flex-direction: column;
+      padding-top: 1rem;
+      color: white;
+      font-weight: 100;
+
+      .pw {
+        border-radius: 10px;
+        height: 5vh;
+        border: none;
+
+        &:hover {
+          box-shadow: 2px 2px 4px #000000;
+        }
+      }
+    }
+
+    .loginButton {
+      border-radius: 10px;
+      height: 7vh;
+      margin-top: 2rem;
+      border: none;
+      color: darkorange;
+      font-weight: 700;
+      background-color: white;
+
+      &:hover {
+        background-color: black;
+        color: white;
+        transition: 1s;
+        cursor: pointer;
+      }
+
+      &:disabled {
+        opacity: 50%;
+        background-color: orange;
+        color: white;
+      }
+    }
+    .haveAccount {
+      cursor: pointer;
+    }
+  }
+}
