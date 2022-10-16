@@ -1,20 +1,28 @@
-import React from 'react';
 import TodoItem from './TodoItem';
 
-function TodoBoard({ todoList, deleteItem, updatedItem }) {
+function TodoBoard({
+  todo,
+  id,
+  isCompleted,
+  createdAt,
+  deleteItem,
+  updatedItem,
+  inputContext,
+  done,
+}) {
   return (
-    <div>
-      <h1>Todo List</h1>
-      {todoList.map((item, idx) => (
-        <TodoItem
-          key={idx}
-          item={item}
-          idx={idx}
-          deleteItem={deleteItem}
-          updatedItem={updatedItem}
-        />
-      ))}
-    </div>
+    <form className="todoItem">
+      <TodoItem
+        todo={todo}
+        createdAt={createdAt}
+        deleteItem={deleteItem}
+        id={id}
+        updatedItem={updatedItem}
+        inputContext={inputContext}
+        isCompleted={isCompleted}
+        done={done}
+      />
+    </form>
   );
 }
 

@@ -1,38 +1,54 @@
-import { useRef, useState } from 'react';
+import { useState, useRef } from 'react';
 import './TodoItem.scss';
-
-function TodoItem({ item, deleteItem, idx, updatedItem }) {
-  const [todoEdit, setTodoEdit] = useState(false);
-  const createdAt = new Date().toLocaleString();
+function TodoItem({
+  todo,
+  createdAt,
+  deleteItem,
+  id,
+  updatedItem,
+  inputContext,
+  isCompleted,
+  done,
+}) {
+  const [updateItem, setUpdateItem] = useState(false);
   const inputRef = useRef();
 
-  const editItem = () => {
-    setTodoEdit(!todoEdit);
-  };
-
-  const SavedTodoList = () => {
-    return (
-      <div>
-        <li>{item}</li>
-        <button onClick={() => deleteItem(idx)}>Delete</button>
-        <button onClick={() => editItem(idx)}>Edit</button>
-        <p>Created at : {createdAt}</p>
-      </div>
-    );
-  };
-
   return (
-    <div className="todoItem">
-      {todoEdit ? (
-        <div>
-          <input defaultValue={item} ref={inputRef} />
-          <button onClick={() => updatedItem(idx, inputRef, setTodoEdit)}>
-            Save
-          </button>
-        </div>
+    <div>
+      <input
+        type="checkbox"
+        onClick={() => done(id)}
+        checked={isCompleted}
+        readOnly
+      />
+      {updateItem ? (
+        <input
+          defaultValue={todo}
+          ref={inputRef}
+          onChange={() => inputContext(id, inputRef)}
+        />
       ) : (
-        <SavedTodoList />
+        <p>{todo}</p>
       )}
+
+      <button onClick={e => deleteItem(id, e)}>Delete</button>
+      {updateItem ? (
+        <button
+          onClick={e => updatedItem(e, id, setUpdateItem, todo, isCompleted)}
+        >
+          완료
+        </button>
+      ) : (
+        <button
+          onClick={e => {
+            e.preventDefault();
+            setUpdateItem(true);
+          }}
+        >
+          Edit
+        </button>
+      )}
+      <p>{createdAt}</p>
     </div>
   );
 }

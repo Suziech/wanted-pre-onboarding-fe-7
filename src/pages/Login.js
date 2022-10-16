@@ -47,15 +47,9 @@ function Login() {
       body: JSON.stringify({ email: id, password: pw }),
     })
       .then(response => response.json())
-      /*.then(result =>
-        localStorage.token ===
-        localStorage.getItem('token', result.access_token)
-          ? alert('로그인 성공') + Redirect('/todo')
-          : alert('아이디와 비밀번호를 확인 해 주세요') + Redirect('/')
-      );*/
       .then(result => {
         if (result.access_token) {
-          localStorage.getItem('token', result.access_token);
+          localStorage.setItem('token', result.access_token);
           alert('로그인 성공');
           Redirect('/todo');
         } else {
