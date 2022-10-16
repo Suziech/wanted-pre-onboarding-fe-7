@@ -4,7 +4,7 @@ import Todo from './pages/Todo';
 
 const Router = () => {
   return (
-    <BrowserRouter basename="/wanted-pre-onboarding-frontend">
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/todo" element={<Todo />} />
