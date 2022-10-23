@@ -1,109 +1,111 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Input from './Input';
 import './Login.scss';
 
 function Login() {
-  const [login, setLogin] = useState(false);
-  const [id, setId] = useState('');
-  const [pw, setPw] = useState('');
+  const [login, setLogin] = useState('signin');
+  const [inputValue, setInputValue] = useState({
+    id: '',
+    pw: '',
+    confirm: '',
+  });
 
-  const saveUserId = e => {
-    setId(e.target.value);
-  };
-  const saveUserPw = e => {
-    setPw(e.target.value);
+  const inputHandler = e => {
+    const { name, value } = e.target;
+    setInputValue(prev => ({ ...prev, [name]: value }));
   };
 
   const signUp = () => {
-    setLogin(!login);
+    if (login === 'signin') {
+      setLogin('signup');
+    } else {
+      setLogin('signin');
+    }
   };
 
-  const buttonStatus = (id, pw) => {
-    return id.includes('@') && pw.length >= 8;
+  const disabledSignIN =
+    inputValue.id.includes('@') && inputValue.pw.length >= 8;
+  const disabledSignUp = disabledSignIN && inputValue.pw === inputValue.confirm;
+
+  const toggleObj = {
+    signin: disabledSignIN,
+    signup: disabledSignUp,
   };
 
-  const Redirect = useNavigate();
+  const navigate = useNavigate();
 
-  const FetchSignUp = () => {
-    fetch('https://pre-onboarding-selection-task.shop/auth/signup', {
+  const FetchSignUp = (email, password) => {
+    fetch(`https://pre-onboarding-selection-task.shop/auth/${login}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: id, password: pw }),
+      body: JSON.stringify({ email, password }),
     })
       .then(response => response.json())
       .then(result => {
         if (result.access_token) {
           localStorage.setItem('token', result.access_token);
-          alert('회원가입 성공');
+          if (login === 'signup') {
+            alert('회원가입 성공');
+          } else {
+            alert('로그인성공');
+          }
+          navigate('/todo');
         } else {
-          alert('동일한 아이디가 존재합니다');
+          if (login === 'signup') {
+            alert('동일한 아이디가 존재합니다');
+          } else {
+            alert('아이디와 비밀번호를 확인 해 주세요');
+          }
         }
       });
   };
-  const FetchLogIn = () => {
-    fetch('https://pre-onboarding-selection-task.shop/auth/signin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: id, password: pw }),
-    })
-      .then(response => response.json())
-      .then(result => {
-        if (result.access_token) {
-          localStorage.setItem('token', result.access_token);
-          alert('로그인 성공');
-          Redirect('/todo');
-        } else {
-          alert('아이디와 비밀번호를 확인 해 주세요');
-          Redirect('/');
-        }
-      });
+  const inputProps = {
+    inputValue,
+    inputHandler,
   };
+
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      navigate('/todo');
+      alert('자동로그인 되었습니다.');
+    }
+  }, [navigate]);
+
   return (
     <div className="login">
       <div className="loginWrapper">
-        <section className="header">
-          <p>{login ? 'SIGNUP' : 'LOGIN'}</p>
-        </section>
+        <section className="header">{login}</section>
         <section className="inputWrapper">
           <div className="idWrapper">
             <span>Email</span>
-            <input
-              className="id"
-              type="email"
-              onChange={saveUserId}
-              value={id}
-            />
+            <Input name="id" className="id" type="email" {...inputProps} />
           </div>
           <div className="pwWrapper">
             <span>Password</span>
-            <input
-              className="pw"
-              type="password"
-              onChange={saveUserPw}
-              value={pw}
-            />
+            <Input name="pw" className="pw" type="password" {...inputProps} />
           </div>
-
-          {login ? (
-            <button
-              className="loginButton"
-              disabled={!buttonStatus(id, pw)}
-              onClick={FetchSignUp}
-            >
-              Sign up
-            </button>
-          ) : (
-            <button
-              className="loginButton"
-              disabled={!buttonStatus(id, pw)}
-              onClick={FetchLogIn}
-            >
-              Log in
-            </button>
+          {login === 'signup' && (
+            <div className="pwWrapper">
+              <span>confirm</span>
+              <Input
+                name="confirm"
+                className="pw"
+                type="password"
+                inputHandler={inputHandler}
+                {...inputProps}
+              />
+            </div>
           )}
-
+          <button
+            className="loginButton"
+            disabled={!toggleObj[login]}
+            onClick={() => FetchSignUp(inputValue.id, inputValue.pw)}
+          >
+            {login}
+          </button>
           <p className="haveAccount" onClick={signUp}>
-            {login
+            {login !== 'signin'
               ? 'Have an account? Login here!'
               : 'Do not have an account? Sign up here!'}
           </p>
@@ -114,3 +116,8 @@ function Login() {
 }
 
 export default Login;
+
+const SIGN = {
+  className: 'id',
+  type: 'email',
+};
