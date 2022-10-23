@@ -5,7 +5,7 @@ function Todo() {
   const [addTodo, setAddTodo] = useState('');
   const [todoInfo, setTodoInfo] = useState([]);
   const createdAt = new Date().toLocaleString();
-  console.log(todoInfo);
+
   const done = id => {
     setTodoInfo(prev =>
       prev.map(item => {
