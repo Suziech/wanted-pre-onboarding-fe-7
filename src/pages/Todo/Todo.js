@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import TodoBoard from '../components/TodoBoard';
+import TodoItem from './TodoItem/TodoItem';
+import { todoFetch } from '../../Api/Todo';
 
 function Todo() {
   const [addTodo, setAddTodo] = useState('');
@@ -22,13 +23,8 @@ function Todo() {
 
   const deleteItem = (id, e) => {
     e.preventDefault();
+    todoFetch.DELETE(id);
     setTodoInfo(prev => prev.filter(item => id !== item.id));
-    fetch(`https://pre-onboarding-selection-task.shop/todos/${id}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-    });
   };
 
   const inputContext = (selectId, inputRef) => {
@@ -44,46 +40,17 @@ function Todo() {
 
   const updatedItem = (e, id, setUpdateItem, todo, isCompleted) => {
     e.preventDefault();
-
-    fetch(`https://pre-onboarding-selection-task.shop/todos/${id}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        todo,
-        isCompleted,
-      }),
-    });
-
+    todoFetch.PUT(id, todo, isCompleted);
     setUpdateItem(prev => !prev);
   };
 
   const FetchTodo = e => {
     e.preventDefault();
-    fetch('https://pre-onboarding-selection-task.shop/todos', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ todo: addTodo }),
-    })
-      .then(response => response.json())
-      .then(result => setTodoInfo([...todoInfo, result]));
+    todoFetch.POST(setTodoInfo, addTodo);
     setAddTodo('');
   };
   useEffect(() => {
-    fetch('https://pre-onboarding-selection-task.shop/todos', {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => response.json())
-      .then(data => setTodoInfo(data));
+    todoFetch.GET(setTodoInfo);
   }, []);
 
   return (
@@ -96,8 +63,8 @@ function Todo() {
             <button onClick={FetchTodo}>Add</button>
           </form>
           {todoInfo.length !== 0 && <h1>Todo List</h1>}
-          {todoInfo?.map(item => (
-            <TodoBoard
+          {todoInfo.map(item => (
+            <TodoItem
               todo={item.todo}
               key={item.id}
               id={item.id}

@@ -14,7 +14,7 @@ function TodoItem({
   const inputRef = useRef();
 
   return (
-    <div>
+    <form>
       <input
         type="checkbox"
         onClick={() => done(id)}
@@ -31,7 +31,6 @@ function TodoItem({
         <p>{todo}</p>
       )}
 
-      <button onClick={e => deleteItem(id, e)}>Delete</button>
       {updateItem ? (
         <button
           onClick={e => updatedItem(e, id, setUpdateItem, todo, isCompleted)}
@@ -39,17 +38,20 @@ function TodoItem({
           완료
         </button>
       ) : (
-        <button
-          onClick={e => {
-            e.preventDefault();
-            setUpdateItem(true);
-          }}
-        >
-          Edit
-        </button>
+        <>
+          <button onClick={e => deleteItem(id, e)}>Delete</button>
+          <button
+            onClick={e => {
+              e.preventDefault();
+              setUpdateItem(true);
+            }}
+          >
+            Edit
+          </button>
+        </>
       )}
       <p>{createdAt}</p>
-    </div>
+    </form>
   );
 }
 
