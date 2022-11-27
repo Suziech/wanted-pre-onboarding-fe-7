@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import './TodoItem.scss';
 function TodoItem({
   todo,
@@ -11,7 +11,7 @@ function TodoItem({
   done,
 }) {
   const [updateItem, setUpdateItem] = useState(false);
-  const inputRef = useRef();
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   return (
     <form>

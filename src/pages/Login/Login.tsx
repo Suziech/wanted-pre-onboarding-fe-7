@@ -1,45 +1,25 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useLogin from '../../hooks/useLogin';
 import Input from './Input/input';
 import './Login.scss';
 
 function Login() {
-  const [login, setLogin] = useState('signin');
-  const [inputValue, setInputValue] = useState({
-    id: '',
-    pw: '',
-    confirm: '',
-  });
-
-  const inputHandler = e => {
-    const { name, value } = e.target;
-    setInputValue(prev => ({ ...prev, [name]: value }));
-  };
-
-  const signUp = () => {
-    login === 'signin' ? setLogin('signup') : setLogin('signin');
-  };
-
-  const disabledSignIn =
-    inputValue.id.includes('@') && inputValue.pw.length >= 8;
-
-  const disabledSignUp = disabledSignIn && inputValue.pw === inputValue.confirm;
-
-  const toggleObj = {
-    signin: disabledSignIn,
-    signup: disabledSignUp,
-  };
-
   const navigate = useNavigate();
-
-  const inputProps = {
-    inputValue,
+  const {
+    purpose,
     inputHandler,
-  };
+    inputProps,
+    toggleObj,
+    inputValue,
+    signUp,
+    login,
+  } = useLogin();
+  // 왜 state 는 inteface로 안 빼는 게 좋은지
+  // => useState() 안에 초기값을 설정 안 해주므로 이때 string || undefined 으로 변환되기 때문에 밑의 애들까지 undefined 일때 어떻게 할지 다 설정해줘야함
+  // 그래서 State 초기값 안에서 타입과 함께 설정해주는 것이 best
 
-  const purpose = () => (login === 'signin' ? 'SIGN-IN' : 'SIGN-UP');
-
-  const FetchSignUp = (email, password) => {
+  const FetchSignUp = (email: string, password: string) => {
     fetch(`https://pre-onboarding-selection-task.shop/auth/${login}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -85,11 +65,11 @@ function Login() {
           {login === 'signup' && (
             <div className="pwWrapper">
               <span>confirm</span>
-              <Input
+              <input
                 name="confirm"
                 className="pw"
                 type="password"
-                inputHandler={inputHandler}
+                onChange={inputHandler}
                 {...inputProps}
               />
             </div>
